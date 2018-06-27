@@ -21,8 +21,27 @@ function replaceDots (data) {
   });
 }
 
+function expand (data) {
+  let arr = [];
+  data.forEach((d, i) => {
+    arr.push({
+      label: d.name,
+      start: d.birth_days,
+      end: d.death_days,
+      level: 0
+    });
+    arr.push({
+      label: d.name,
+      start: d.reign_start_days,
+      end: d.reign_end_days,
+      level: d.killer
+    });
+  });
+  return arr;
+}
+
 (async () => {
-  const data = replaceDots(toArray(await (await fetch('./data.json')).json()));
+  const data = expand(replaceDots(toArray(await (await fetch('./data.json')).json())));
   console.log(data);
 
   const el = document.querySelector('#vis');
@@ -37,9 +56,9 @@ function replaceDots (data) {
 
   const vis = new components.GanttChart(el, {
     data,
-    label: 'name',
-    start: 'birth_days',
-    end: 'death_days',
+    label: 'label',
+    start: 'start',
+    end: 'end',
     level: 'level',
     width: 960,
     height: 540,
